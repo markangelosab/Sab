@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Information Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <h1>Personal Information Form</h1>
+        <form id="infoForm">
+            <label>Name: <input type="text" id="name"></label><br><br>
+            <label>Age: <input type="text" id="age"></label><br><br>
+            <label>Hobbies: <input type="text" id="hobbies"></label><br><br>
+            <label>Student: <input type="checkbox" id="student"></label><br><br>
+            <button type="submit">Submit</button>
+        </form>
+
+        <h2>Summary</h2>
+        <div id="summary"></div>
+
+        <script>
+            let currentEdit = null;
+            document.getElementById('age').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            document.getElementById('infoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                let name = document.getElementById('name').value;
+                let age = document.getElementById('age').value;
+                let hobbies = document.getElementById('hobbies').value;
+                let isStudent = document.getElementById('student').checked;
+
+                if (currentEdit) {
+                    currentEdit.querySelector('.summaryName').textContent = name;
+                    currentEdit.querySelector('.summaryAge').textContent = age;
+                    currentEdit.querySelector('.summaryHobbies').textContent = hobbies;
+                    currentEdit.querySelector('.summaryStudent').textContent = isStudent ? 'Yes' : 'No';
+                    currentEdit = null;
+                } else {
+                    let summaryItem = document.createElement('div');
+                    summaryItem.innerHTML = `<p>Name: <span class="summaryName">${name}</span><br>
+                                             Age: <span class="summaryAge">${age}</span><br>
+                                             Hobbies: <span class="summaryHobbies">${hobbies}</span><br>
+                                             Student: <span class="summaryStudent">${isStudent ? 'Yes' : 'No'}</span></p>`;
+
+                    let editButton = createButton('Edit', () => {
+                        document.getElementById('name').value = name;
+                        document.getElementById('age').value = age;
+                        document.getElementById('hobbies').value = hobbies;
+                        document.getElementById('student').checked = isStudent;
+                        currentEdit = summaryItem;
+                    });
+
+                    let deleteButton = createButton('Delete', () => summaryItem.remove());
+
+                    summaryItem.appendChild(editButton);
+                    summaryItem.appendChild(deleteButton);
+                    document.getElementById('summary').appendChild(summaryItem);
+                }
+
+                document.getElementById('infoForm').reset();
+            });
+
+            function createButton(text, onClick) {
+                let btn = document.createElement('button');
+                btn.textContent = text;
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    onClick();
+                });
+                return btn;
+            }
+        </script>
+</body>
+</html>
